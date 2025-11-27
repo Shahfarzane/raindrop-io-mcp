@@ -1,0 +1,20 @@
+{
+  "name": "raindrop",
+  "version": "0.1.0",
+  "description": "An xmcp application with tool syntax",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "xmcp build",
+    "dev": "xmcp dev",
+    "start": "node dist/http.js"
+  },
+  "dependencies": {
+    "xmcp": "0.5.1",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  }
+}
