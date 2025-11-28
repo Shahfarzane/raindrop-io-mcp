@@ -82,17 +82,15 @@ export default async function updateOneRaindrop({
   }
 
   if (updatedFields.length === 0) {
-    return {
-      id,
-      updated: [],
-      message: "No fields to update",
-    };
+    return "No fields to update";
   }
 
   await updateRaindrop(id, updates);
 
   return {
-    id,
-    updated: updatedFields,
+    structuredContent: {
+      id,
+      updated: updatedFields,
+    },
   };
 }

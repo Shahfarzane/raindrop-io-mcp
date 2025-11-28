@@ -63,9 +63,7 @@ export default async function bulkUpdateRaindropsTool({
   // Handle deletion separately
   if (deleteMatching && ids && ids.length > 0) {
     const result = await bulkDeleteRaindrops(collectionId, ids, search);
-    return {
-      deleted: result.modified,
-    };
+    return `Deleted ${result.modified} raindrops`;
   }
 
   // Build update payload
@@ -102,8 +100,10 @@ export default async function bulkUpdateRaindropsTool({
   const result = await bulkUpdateRaindrops(collectionId, updates, search);
 
   return {
-    modified: result.modified ?? 0,
-    operations,
-    targetedBy: ids ? `${ids.length} IDs` : search ? `search: ${search}` : "all in collection",
+    structuredContent: {
+      modified: result.modified ?? 0,
+      operations,
+      targetedBy: ids ? `${ids.length} IDs` : search ? `search: ${search}` : "all in collection",
+    },
   };
 }

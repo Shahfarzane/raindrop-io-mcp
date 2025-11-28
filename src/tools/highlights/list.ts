@@ -51,7 +51,9 @@ export default async function listHighlights({
   }));
 
   return {
-    highlights,
-    meta: createPaginationMeta(response.items.length, page, perPage),
+    structuredContent: {
+      highlights,
+      meta: createPaginationMeta(response.items.length, page, perPage),
+    },
   };
 }

@@ -19,21 +19,16 @@ export default function getAuthUrlTool() {
   const authenticated = isAuthenticated();
 
   if (authenticated) {
-    return {
-      authenticated: true,
-      message: "Already authenticated with Raindrop.io",
-    };
+    return "Already authenticated with Raindrop.io";
   }
 
   const url = getAuthUrl();
 
-  return {
-    authenticated: false,
-    url,
-    instructions:
-      "1. Open this URL in a browser\n" +
-      "2. Authorize the application\n" +
-      "3. Copy the 'code' parameter from the redirect URL\n" +
-      "4. Use exchange_auth_code with that code",
-  };
+  return `Authorization URL: ${url}
+
+Instructions:
+1. Open this URL in a browser
+2. Authorize the application
+3. Copy the 'code' parameter from the redirect URL
+4. Use exchange_auth_code with that code`;
 }

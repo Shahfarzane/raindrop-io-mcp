@@ -29,8 +29,10 @@ export default async function listTags({
   const tags = shapeTags(response.items).sort((a, b) => b.count - a.count);
 
   return {
-    tags,
-    total: tags.length,
-    collectionId: collectionId ?? "all",
+    structuredContent: {
+      tags,
+      total: tags.length,
+      collectionId: collectionId ?? "all",
+    },
   };
 }

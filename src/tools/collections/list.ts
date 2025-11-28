@@ -77,17 +77,21 @@ export default async function listCollections({
       // Build subtree from this parent
       const tree = buildTree(children, childRes.items, fields);
       return {
-        collections: tree,
-        total: children.length,
-        parentId,
+        structuredContent: {
+          collections: tree,
+          total: children.length,
+          parentId,
+        },
       };
     }
 
     // Just return the direct children, shaped
     return {
-      collections: children.map((c) => shapeCollection(c, fields)),
-      total: children.length,
-      parentId,
+      structuredContent: {
+        collections: children.map((c) => shapeCollection(c, fields)),
+        total: children.length,
+        parentId,
+      },
     };
   }
 
@@ -96,14 +100,18 @@ export default async function listCollections({
     const childRes = await getChildCollections();
     const tree = buildTree(rootCollections, childRes.items, fields);
     return {
-      collections: tree,
-      total: rootCollections.length,
+      structuredContent: {
+        collections: tree,
+        total: rootCollections.length,
+      },
     };
   }
 
   // Just root collections, no tree
   return {
-    collections: rootCollections.map((c) => shapeCollection(c, fields)),
-    total: rootCollections.length,
+    structuredContent: {
+      collections: rootCollections.map((c) => shapeCollection(c, fields)),
+      total: rootCollections.length,
+    },
   };
 }

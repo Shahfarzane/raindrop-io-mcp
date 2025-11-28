@@ -135,12 +135,14 @@ export default async function searchRaindrops({
   const meta = createPaginationMeta(response.count, page, perPage);
 
   return {
-    items,
-    meta,
-    query: {
-      collectionId,
-      search: searchQuery,
-      sort,
+    structuredContent: {
+      items,
+      meta,
+      query: {
+        collectionId,
+        search: searchQuery,
+        sort,
+      },
     },
   };
 }

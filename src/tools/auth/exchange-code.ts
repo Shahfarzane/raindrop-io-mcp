@@ -23,16 +23,9 @@ export default async function exchangeAuthCode({
 }: InferSchema<typeof schema>) {
   try {
     await exchangeCode(code);
-
-    return {
-      success: true,
-      message: "Authentication successful! You can now use Raindrop.io tools.",
-    };
+    return "Authentication successful! You can now use Raindrop.io tools.";
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    return {
-      success: false,
-      error: message,
-    };
+    throw new Error(`Authentication failed: ${message}`);
   }
 }

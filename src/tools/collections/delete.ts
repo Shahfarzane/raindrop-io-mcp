@@ -28,15 +28,9 @@ export default async function deleteCollectionTool({
 }: InferSchema<typeof schema>) {
   if (id === -99) {
     await emptyTrash();
-    return {
-      deleted: true,
-      message: "Trash has been emptied",
-    };
+    return "Trash has been emptied";
   }
 
   await deleteCollection(id);
-  return {
-    deleted: true,
-    id,
-  };
+  return `Collection ${id} has been deleted`;
 }

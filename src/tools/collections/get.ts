@@ -29,5 +29,7 @@ export default async function getCollectionTool({
   fields,
 }: InferSchema<typeof schema>) {
   const response = await getCollection(id);
-  return shapeCollection(response.item, fields as FieldLevel);
+  return {
+    structuredContent: shapeCollection(response.item, fields as FieldLevel),
+  };
 }

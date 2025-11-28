@@ -68,7 +68,9 @@ export default async function updateCollectionTool({
   await updateCollection(id, updates);
 
   return {
-    id,
-    updated: updatedFields,
+    structuredContent: {
+      id,
+      updated: updatedFields,
+    },
   };
 }

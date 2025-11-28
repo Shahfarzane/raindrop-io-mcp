@@ -72,13 +72,15 @@ export default async function autoTagRaindrop({
   };
 
   return {
-    raindropId,
-    metadata,
-    raindropSuggestions,
-    userVocabulary,
-    maxTags,
-    instructions:
-      "Use the generate-tags prompt with this data to create tags. " +
-      "Then use update_raindrop to apply the generated tags.",
+    structuredContent: {
+      raindropId,
+      metadata,
+      raindropSuggestions,
+      userVocabulary,
+      maxTags,
+      instructions:
+        "Use the generate-tags prompt with this data to create tags. " +
+        "Then use update_raindrop to apply the generated tags.",
+    },
   };
 }

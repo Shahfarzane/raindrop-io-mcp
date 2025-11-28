@@ -64,8 +64,10 @@ export default async function createOneRaindrop({
 
   // Return minimal response
   return {
-    id: response.item._id,
-    title: response.item.title,
-    link: response.item.link,
+    structuredContent: {
+      id: response.item._id,
+      title: response.item.title,
+      link: response.item.link,
+    },
   };
 }

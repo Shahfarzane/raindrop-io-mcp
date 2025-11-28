@@ -37,9 +37,9 @@ export default async function analyzeUntagged({
   limit,
   includeMetadata,
 }: InferSchema<typeof schema>) {
-  // Search for untagged items using Raindrop's special search syntax
+  // Search for untagged items using Raindrop's search syntax
   const response = await getRaindrops(collectionId, {
-    search: "#-tag", // Raindrop syntax for items without tags
+    search: "notag:true",
     perpage: limit,
     sort: "-created",
   });
@@ -76,12 +76,14 @@ export default async function analyzeUntagged({
   });
 
   return {
-    items,
-    total: response.count,
-    returned: items.length,
-    userVocabulary: includeMetadata ? userVocabulary : undefined,
-    instructions:
-      "Use the generate-tags prompt for each item. " +
-      "Then use update_raindrop or bulk_update_raindrops to apply tags.",
+    structuredContent: {
+      items,
+      total: response.count,
+      returned: items.length,
+      userVocabulary: includeMetadata ? userVocabulary : undefined,
+      instructions:
+        "Use the generate-tags prompt for each item. " +
+        "Then use update_raindrop or bulk_update_raindrops to apply tags.",
+    },
   };
 }

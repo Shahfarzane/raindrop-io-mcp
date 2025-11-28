@@ -66,11 +66,7 @@ export default async function suggestTags({
   // If applying tags immediately
   if (applyImmediately && tags && tags.length > 0 && raindropId) {
     await updateRaindrop(raindropId, { tags });
-    return {
-      applied: true,
-      raindropId,
-      tags,
-    };
+    return `Applied tags [${tags.join(", ")}] to raindrop ${raindropId}`;
   }
 
   // Get metadata and suggestions
@@ -136,13 +132,15 @@ export default async function suggestTags({
   }
 
   return {
-    raindropId,
-    url,
-    metadata,
-    raindropSuggestions,
-    userVocabulary,
-    instructions:
-      "Use the generate-tags prompt with this data to produce intelligent tag suggestions. " +
-      "Consider the metadata, existing tags, Raindrop's suggestions, and user's tag vocabulary.",
+    structuredContent: {
+      raindropId,
+      url,
+      metadata,
+      raindropSuggestions,
+      userVocabulary,
+      instructions:
+        "Use the generate-tags prompt with this data to produce intelligent tag suggestions. " +
+        "Consider the metadata, existing tags, Raindrop's suggestions, and user's tag vocabulary.",
+    },
   };
 }

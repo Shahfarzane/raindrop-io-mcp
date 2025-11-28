@@ -17,7 +17,7 @@ export const metadata: ToolMetadata = {
   },
 };
 
-export default async function getLibraryOverview(): Promise<LibraryOverview> {
+export default async function getLibraryOverview() {
   // Fetch data in parallel for efficiency
   const [collectionsRes, tagsRes, filtersRes, unsortedRes, trashRes] = await Promise.all([
     getCollections(),
@@ -42,14 +42,16 @@ export default async function getLibraryOverview(): Promise<LibraryOverview> {
     .slice(0, 20);
 
   return {
-    totalRaindrops,
-    totalCollections: collectionsRes.items.length,
-    rootCollections,
-    topTags,
-    untaggedCount: filtersRes.notag.count,
-    systemCollections: {
-      unsorted: unsortedRes.count,
-      trash: trashRes.count,
-    },
+    structuredContent: {
+      totalRaindrops,
+      totalCollections: collectionsRes.items.length,
+      rootCollections,
+      topTags,
+      untaggedCount: filtersRes.notag.count,
+      systemCollections: {
+        unsorted: unsortedRes.count,
+        trash: trashRes.count,
+      },
+    } as LibraryOverview,
   };
 }

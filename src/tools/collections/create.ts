@@ -42,8 +42,10 @@ export default async function createCollectionTool({
   });
 
   return {
-    id: response.item._id,
-    title: response.item.title,
-    parentId: response.item.parent?.$id,
+    structuredContent: {
+      id: response.item._id,
+      title: response.item.title,
+      parentId: response.item.parent?.$id,
+    },
   };
 }

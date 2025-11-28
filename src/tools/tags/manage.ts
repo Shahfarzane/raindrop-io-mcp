@@ -51,12 +51,7 @@ export default async function manageTagsTool({
         throw new Error("rename operation requires exactly one tag");
       }
       await renameTags(targetCollection, tags[0], newName);
-      return {
-        operation: "renamed",
-        from: tags[0],
-        to: newName,
-        collectionId: targetCollection,
-      };
+      return `Renamed tag "${tags[0]}" to "${newName}"`;
     }
 
     case "merge": {
@@ -72,21 +67,13 @@ export default async function manageTagsTool({
           await renameTags(targetCollection, tag, newName);
         }
       }
-      return {
-        operation: "merged",
-        from: tags.filter((t) => t !== newName),
-        to: newName,
-        collectionId: targetCollection,
-      };
+      const merged = tags.filter((t) => t !== newName);
+      return `Merged tags [${merged.join(", ")}] into "${newName}"`;
     }
 
     case "delete": {
       await deleteTags(targetCollection, tags);
-      return {
-        operation: "deleted",
-        tags,
-        collectionId: targetCollection,
-      };
+      return `Deleted tags: ${tags.join(", ")}`;
     }
   }
 }

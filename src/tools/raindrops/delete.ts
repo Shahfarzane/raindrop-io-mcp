@@ -23,9 +23,5 @@ export default async function deleteOneRaindrop({
   id,
 }: InferSchema<typeof schema>) {
   await deleteRaindrop(id);
-
-  return {
-    deleted: true,
-    id,
-  };
+  return `Raindrop ${id} has been deleted`;
 }

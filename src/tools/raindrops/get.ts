@@ -31,5 +31,5 @@ export default async function getOneRaindrop({
   const response = await getRaindrop(id);
   const item = shapeRaindrop(response.item, fields as FieldLevel);
 
-  return { item };
+  return { structuredContent: { item } };
 }

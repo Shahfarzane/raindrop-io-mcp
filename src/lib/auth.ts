@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import * as http from "http";
 import type { OAuthTokens, OAuthTokenResponse } from "./types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "tokens.json");
@@ -169,4 +170,92 @@ export function clearTokens(): void {
   if (fs.existsSync(TOKEN_FILE)) {
     fs.unlinkSync(TOKEN_FILE);
   }
+}
+
+/**
+ * Starts a temporary HTTP server to capture the OAuth callback,
+ * then automatically exchanges the code for tokens.
+ * Returns the auth URL for the user to open.
+ */
+export async function startAuthFlow(timeoutMs: number = 120000): Promise<string> {
+  const redirectUri = getRedirectUri();
+  const url = new URL(redirectUri);
+  const port = parseInt(url.port) || 3000;
+  const callbackPath = url.pathname || "/callback";
+
+  return new Promise((resolve, reject) => {
+    const server = http.createServer(async (req, res) => {
+      const reqUrl = new URL(req.url || "", `http://localhost:${port}`);
+
+      if (reqUrl.pathname === callbackPath) {
+        const code = reqUrl.searchParams.get("code");
+        const error = reqUrl.searchParams.get("error");
+
+        if (error) {
+          res.writeHead(400, { "Content-Type": "text/html" });
+          res.end(`<html><body><h1>Authentication Failed</h1><p>${error}</p><p>You can close this window.</p></body></html>`);
+          server.close();
+          reject(new Error(`OAuth error: ${error}`));
+          return;
+        }
+
+        if (code) {
+          try {
+            await exchangeCode(code);
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(`<html><body><h1>Authentication Successful!</h1><p>You can close this window and return to Claude Code.</p></body></html>`);
+            server.close();
+            resolve("Authentication successful! You can now use Raindrop.io tools.");
+          } catch (err) {
+            res.writeHead(500, { "Content-Type": "text/html" });
+            res.end(`<html><body><h1>Authentication Failed</h1><p>${err instanceof Error ? err.message : "Unknown error"}</p></body></html>`);
+            server.close();
+            reject(err);
+          }
+          return;
+        }
+
+        res.writeHead(400, { "Content-Type": "text/html" });
+        res.end(`<html><body><h1>Missing Code</h1><p>No authorization code received.</p></body></html>`);
+        return;
+      }
+
+      // For any other path, return 404
+      res.writeHead(404);
+      res.end();
+    });
+
+    // Set timeout
+    const timeout = setTimeout(() => {
+      server.close();
+      reject(new Error(`Authentication timed out after ${timeoutMs / 1000} seconds. Please try again.`));
+    }, timeoutMs);
+
+    server.on("close", () => {
+      clearTimeout(timeout);
+    });
+
+    server.on("error", (err: NodeJS.ErrnoException) => {
+      clearTimeout(timeout);
+      if (err.code === "EADDRINUSE") {
+        reject(new Error(`Port ${port} is already in use. Please close any other servers on that port and try again.`));
+      } else {
+        reject(err);
+      }
+    });
+
+    server.listen(port, () => {
+      // Server is ready - this doesn't resolve the promise yet
+      // The promise resolves when we get the callback
+    });
+  });
+}
+
+/**
+ * Get the port from the redirect URI
+ */
+export function getCallbackPort(): number {
+  const redirectUri = getRedirectUri();
+  const url = new URL(redirectUri);
+  return parseInt(url.port) || 3000;
 }
