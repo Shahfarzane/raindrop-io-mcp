@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
 import * as http from "http";
-import type { OAuthTokens, OAuthTokenResponse } from "./types";
+import * as os from "os";
+import * as path from "path";
+import type { OAuthTokenResponse, OAuthTokens } from "./types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "tokens.json");
 const OAUTH_AUTHORIZE_URL = "https://raindrop.io/oauth/authorize";
@@ -150,7 +150,7 @@ export async function getAccessToken(): Promise<string> {
   if (!tokens) {
     throw new Error(
       "Not authenticated. Please use get_auth_url to get the authorization URL, " +
-      "then use exchange_auth_code with the code from the callback."
+        "then use exchange_auth_code with the code from the callback."
     );
   }
 
@@ -177,10 +177,10 @@ export function clearTokens(): void {
  * then automatically exchanges the code for tokens.
  * Returns the auth URL for the user to open.
  */
-export async function startAuthFlow(timeoutMs: number = 120000): Promise<string> {
+export async function startAuthFlow(timeoutMs = 120_000): Promise<string> {
   const redirectUri = getRedirectUri();
   const url = new URL(redirectUri);
-  const port = parseInt(url.port) || 3000;
+  const port = Number.parseInt(url.port) || 3000;
   const callbackPath = url.pathname || "/callback";
 
   return new Promise((resolve, reject) => {
@@ -193,7 +193,9 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
 
         if (error) {
           res.writeHead(400, { "Content-Type": "text/html" });
-          res.end(`<html><body><h1>Authentication Failed</h1><p>${error}</p><p>You can close this window.</p></body></html>`);
+          res.end(
+            `<html><body><h1>Authentication Failed</h1><p>${error}</p><p>You can close this window.</p></body></html>`
+          );
           server.close();
           reject(new Error(`OAuth error: ${error}`));
           return;
@@ -203,12 +205,18 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
           try {
             await exchangeCode(code);
             res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(`<html><body><h1>Authentication Successful!</h1><p>You can close this window and return to Claude Code.</p></body></html>`);
+            res.end(
+              "<html><body><h1>Authentication Successful!</h1><p>You can close this window and return to Claude Code.</p></body></html>"
+            );
             server.close();
-            resolve("Authentication successful! You can now use Raindrop.io tools.");
+            resolve(
+              "Authentication successful! You can now use Raindrop.io tools."
+            );
           } catch (err) {
             res.writeHead(500, { "Content-Type": "text/html" });
-            res.end(`<html><body><h1>Authentication Failed</h1><p>${err instanceof Error ? err.message : "Unknown error"}</p></body></html>`);
+            res.end(
+              `<html><body><h1>Authentication Failed</h1><p>${err instanceof Error ? err.message : "Unknown error"}</p></body></html>`
+            );
             server.close();
             reject(err);
           }
@@ -216,7 +224,9 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
         }
 
         res.writeHead(400, { "Content-Type": "text/html" });
-        res.end(`<html><body><h1>Missing Code</h1><p>No authorization code received.</p></body></html>`);
+        res.end(
+          "<html><body><h1>Missing Code</h1><p>No authorization code received.</p></body></html>"
+        );
         return;
       }
 
@@ -228,7 +238,11 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
     // Set timeout
     const timeout = setTimeout(() => {
       server.close();
-      reject(new Error(`Authentication timed out after ${timeoutMs / 1000} seconds. Please try again.`));
+      reject(
+        new Error(
+          `Authentication timed out after ${timeoutMs / 1000} seconds. Please try again.`
+        )
+      );
     }, timeoutMs);
 
     server.on("close", () => {
@@ -238,7 +252,11 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
     server.on("error", (err: NodeJS.ErrnoException) => {
       clearTimeout(timeout);
       if (err.code === "EADDRINUSE") {
-        reject(new Error(`Port ${port} is already in use. Please close any other servers on that port and try again.`));
+        reject(
+          new Error(
+            `Port ${port} is already in use. Please close any other servers on that port and try again.`
+          )
+        );
       } else {
         reject(err);
       }
@@ -257,5 +275,5 @@ export async function startAuthFlow(timeoutMs: number = 120000): Promise<string>
 export function getCallbackPort(): number {
   const redirectUri = getRedirectUri();
   const url = new URL(redirectUri);
-  return parseInt(url.port) || 3000;
+  return Number.parseInt(url.port) || 3000;
 }

@@ -16,6 +16,12 @@ export const schema = {
   public: z.boolean().optional().describe("Make collection publicly viewable"),
   expanded: z.boolean().optional().describe("Expand in sidebar"),
   color: z.string().optional().describe("Collection color"),
+  cover: z
+    .array(z.string())
+    .optional()
+    .describe(
+      "Collection cover/icon URL(s). Use search_collection_covers to find icons, then pass the PNG URL here."
+    ),
 };
 
 export const metadata: ToolMetadata = {
@@ -36,6 +42,7 @@ export default async function updateCollectionTool({
   public: isPublic,
   expanded,
   color,
+  cover,
 }: InferSchema<typeof schema>) {
   const updates: Record<string, unknown> = {};
   const updatedFields: string[] = [];
@@ -63,6 +70,10 @@ export default async function updateCollectionTool({
   if (color !== undefined) {
     updates.color = color;
     updatedFields.push("color");
+  }
+  if (cover !== undefined) {
+    updates.cover = cover;
+    updatedFields.push("cover");
   }
 
   await updateCollection(id, updates);
