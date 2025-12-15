@@ -1,7 +1,8 @@
-import * as fs from "fs";
-import * as http from "http";
-import * as os from "os";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as http from "node:http";
+import * as os from "node:os";
+import * as path from "node:path";
+
 import type { OAuthTokenResponse, OAuthTokens } from "./types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "tokens.json");
@@ -180,7 +181,7 @@ export function clearTokens(): void {
 export async function startAuthFlow(timeoutMs = 120_000): Promise<string> {
 	const redirectUri = getRedirectUri();
 	const url = new URL(redirectUri);
-	const port = Number.parseInt(url.port) || 3000;
+	const port = Number.parseInt(url.port, 10) || 3000;
 	const callbackPath = url.pathname || "/callback";
 
 	return new Promise((resolve, reject) => {
@@ -275,5 +276,5 @@ export async function startAuthFlow(timeoutMs = 120_000): Promise<string> {
 export function getCallbackPort(): number {
 	const redirectUri = getRedirectUri();
 	const url = new URL(redirectUri);
-	return Number.parseInt(url.port) || 3000;
+	return Number.parseInt(url.port, 10) || 3000;
 }

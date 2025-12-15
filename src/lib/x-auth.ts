@@ -1,8 +1,9 @@
-import * as crypto from "crypto";
-import * as fs from "fs";
-import * as http from "http";
-import * as os from "os";
-import * as path from "path";
+import * as crypto from "node:crypto";
+import * as fs from "node:fs";
+import * as http from "node:http";
+import * as os from "node:os";
+import * as path from "node:path";
+
 import type { XOAuthTokenResponse, XOAuthTokens } from "./x-types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "x-tokens.json");
@@ -299,7 +300,7 @@ export function clearXTokens(): void {
 export async function startXAuthFlow(timeoutMs = 120_000): Promise<string> {
 	const redirectUri = getXRedirectUri();
 	const url = new URL(redirectUri);
-	const port = Number.parseInt(url.port) || 3001;
+	const port = Number.parseInt(url.port, 10) || 3001;
 	const callbackPath = url.pathname || "/callback";
 
 	// Generate auth URL (saves PKCE params)
@@ -406,5 +407,5 @@ export async function startXAuthFlow(timeoutMs = 120_000): Promise<string> {
 export function getXCallbackPort(): number {
 	const redirectUri = getXRedirectUri();
 	const url = new URL(redirectUri);
-	return Number.parseInt(url.port) || 3001;
+	return Number.parseInt(url.port, 10) || 3001;
 }

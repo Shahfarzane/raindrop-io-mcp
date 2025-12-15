@@ -1,5 +1,6 @@
-import { type ToolMetadata } from "xmcp";
-import { getAuthUrl, isAuthenticated, startAuthFlow, getCallbackPort } from "../../lib/auth";
+import type { ToolMetadata } from "xmcp";
+
+import { getAuthUrl, getCallbackPort, isAuthenticated, startAuthFlow } from "../../lib/auth";
 
 export const schema = {};
 

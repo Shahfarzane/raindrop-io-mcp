@@ -1,8 +1,9 @@
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
-import type { XImportState, XImportStatus } from "./x-types";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+
 import { getRaindrops } from "./raindrop-client";
+import type { XImportState, XImportStatus } from "./x-types";
 
 const IMPORT_STATE_DIR = path.join(
 	os.homedir(),
@@ -178,7 +179,7 @@ export async function loadExistingTweetIds(
 
 			for (const item of response.items) {
 				const match = item.link.match(tweetIdPattern);
-				if (match && match[1]) {
+				if (match?.[1]) {
 					tweetIds.push(match[1]);
 				}
 			}
