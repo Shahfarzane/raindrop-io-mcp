@@ -1,7 +1,23 @@
 # Dependencies
 node_modules/
-.vercel
-dist
-.xmcp
+
+# Build
+dist/
+.xmcp/
 xmcp-env.d.ts
+
+# Environment
 .env
+
+# Vercel
+.vercel
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Claude Code
+.claude/
