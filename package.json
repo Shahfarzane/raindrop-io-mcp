@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Shahfarzane/raindrop-mcp.git"
+    "url": "git+https://github.com/Shahfarzane/raindrop-io-mcp.git"
   },
-  "homepage": "https://github.com/Shahfarzane/raindrop-mcp#readme",
+  "homepage": "https://github.com/Shahfarzane/raindrop-io-mcp#readme",
   "bugs": {
-    "url": "https://github.com/Shahfarzane/raindrop-mcp/issues"
+    "url": "https://github.com/Shahfarzane/raindrop-io-mcp/issues"
   },
   "keywords": [
     "mcp",
