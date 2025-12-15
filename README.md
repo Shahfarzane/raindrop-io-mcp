@@ -15,7 +15,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for ma
 
 ### Prerequisites
 
-- Node.js 20+
+- [Bun](https://bun.sh) (recommended) or Node.js 20+
 - [Raindrop.io](https://raindrop.io) account
 
 ### Installation
@@ -23,7 +23,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for ma
 ```bash
 git clone https://github.com/Shahfarzane/raindrop-io-mcp.git
 cd raindrop-io-mcp
-npm install
+bun install
 cp .env.example .env
 ```
 
@@ -54,8 +54,8 @@ RAINDROP_REDIRECT_URI=http://localhost:3000/callback
 
 ```bash
 # Build and start
-npm run build
-npm start
+bun run build
+bun start
 ```
 
 The server runs on **two ports**:
@@ -183,9 +183,9 @@ Tokens are stored in `~/.raindrop-mcp/`:
 ## Development
 
 ```bash
-npm run dev      # Start with hot reload
-npm run build    # Build for production
-npm start        # Run production server
+bun run dev      # Start with hot reload
+bun run build    # Build for production
+bun start        # Run production server
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.

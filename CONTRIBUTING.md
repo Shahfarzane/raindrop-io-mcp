@@ -12,7 +12,7 @@ Thanks for your interest in contributing!
 
 2. **Install dependencies**
    ```bash
-   npm install
+   bun install
    ```
 
 3. **Set up environment**
@@ -23,7 +23,7 @@ Thanks for your interest in contributing!
 
 4. **Start development server**
    ```bash
-   npm run dev
+   bun run dev
    ```
 
 ## Project Structure
@@ -39,14 +39,14 @@ src/
 ## Code Style
 
 - TypeScript strict mode is enabled
-- Run `npm run build` before committing to catch type errors
+- Run `bun run build` before committing to catch type errors
 
 ## Submitting Changes
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Run `npm run build` to verify
+4. Run `bun run build` to verify
 5. Commit your changes (`git commit -m 'Add amazing feature'`)
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request

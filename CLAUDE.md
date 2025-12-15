@@ -10,13 +10,13 @@ Raindrop.io MCP is an MCP (Model Context Protocol) server built with the [xmcp](
 
 ```bash
 # Development - starts MCP server with hot reload
-npm run dev
+bun run dev
 
 # Build for production
-npm run build
+bun run build
 
 # Start production server (HTTP)
-npm run start
+bun start
 ```
 
 ## Architecture
