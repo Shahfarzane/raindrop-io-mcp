@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { type ToolMetadata, type InferSchema } from "xmcp";
+
 import {
+	clearXTokens,
+	getXAuthUrl,
 	isXAuthenticated,
 	startXAuthFlow,
-	getXAuthUrl,
-	clearXTokens,
 } from "../../lib/x-auth";
 import { getCurrentXUser } from "../../lib/x-client";
 
@@ -19,7 +20,7 @@ export const schema = {
 export const metadata: ToolMetadata = {
 	name: "x_authenticate",
 	description:
-		"Authenticate with X.com (Twitter) to access bookmarks. Opens browser for OAuth authorization. Use logout=true to clear existing authentication.",
+		"Authenticate with X.com (Twitter) to access bookmarks. Opens your browser automatically for OAuth authorization. Use logout=true to clear existing authentication.",
 	annotations: {
 		title: "X.com Authenticate",
 		readOnlyHint: false,

@@ -3,6 +3,8 @@ import * as http from "node:http";
 import * as os from "node:os";
 import * as path from "node:path";
 
+import open from "open";
+
 import type { OAuthTokenResponse, OAuthTokens } from "./types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "tokens.json");
@@ -176,13 +178,16 @@ export function clearTokens(): void {
 /**
  * Starts a temporary HTTP server to capture the OAuth callback,
  * then automatically exchanges the code for tokens.
- * Returns the auth URL for the user to open.
+ * Automatically opens the browser for the user.
  */
 export async function startAuthFlow(timeoutMs = 120_000): Promise<string> {
 	const redirectUri = getRedirectUri();
 	const url = new URL(redirectUri);
 	const port = Number.parseInt(url.port, 10) || 3000;
 	const callbackPath = url.pathname || "/callback";
+
+	// Generate auth URL
+	const authUrl = getAuthUrl();
 
 	return new Promise((resolve, reject) => {
 		const server = http.createServer(async (req, res) => {
@@ -263,9 +268,17 @@ export async function startAuthFlow(timeoutMs = 120_000): Promise<string> {
 			}
 		});
 
-		server.listen(port, () => {
-			// Server is ready - this doesn't resolve the promise yet
-			// The promise resolves when we get the callback
+		server.listen(port, async () => {
+			// Server is ready - open browser automatically
+			console.log(`\nOpening browser for Raindrop.io authorization...`);
+			console.log(`If browser doesn't open, visit: ${authUrl}\n`);
+			
+			try {
+				await open(authUrl);
+			} catch {
+				// Browser open failed, user will need to open manually
+				console.log(`Could not open browser automatically. Please open the URL manually.`);
+			}
 		});
 	});
 }

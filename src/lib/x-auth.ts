@@ -4,6 +4,8 @@ import * as http from "node:http";
 import * as os from "node:os";
 import * as path from "node:path";
 
+import open from "open";
+
 import type { XOAuthTokenResponse, XOAuthTokens } from "./x-types";
 
 const TOKEN_FILE = path.join(os.homedir(), ".raindrop-mcp", "x-tokens.json");
@@ -306,14 +308,6 @@ export async function startXAuthFlow(timeoutMs = 120_000): Promise<string> {
 	// Generate auth URL (saves PKCE params)
 	const authUrl = getXAuthUrl();
 
-	// Log the URL for the user
-	console.log("\n========================================");
-	console.log("X.com Authentication Required");
-	console.log("========================================");
-	console.log("\nPlease open this URL in your browser:");
-	console.log(`\n${authUrl}\n`);
-	console.log("Waiting for authorization...\n");
-
 	return new Promise((resolve, reject) => {
 		const server = http.createServer(async (req, res) => {
 			const reqUrl = new URL(req.url || "", `http://localhost:${port}`);
@@ -395,8 +389,17 @@ export async function startXAuthFlow(timeoutMs = 120_000): Promise<string> {
 			}
 		});
 
-		server.listen(port, () => {
-			// Server is ready - waiting for callback
+		server.listen(port, async () => {
+			// Server is ready - open browser automatically
+			console.log(`\nOpening browser for X.com authorization...`);
+			console.log(`If browser doesn't open, visit: ${authUrl}\n`);
+			
+			try {
+				await open(authUrl);
+			} catch {
+				// Browser open failed, user will need to open manually
+				console.log(`Could not open browser automatically. Please open the URL manually.`);
+			}
 		});
 	});
 }
