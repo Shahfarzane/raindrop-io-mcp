@@ -21,8 +21,8 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for ma
 ### Installation
 
 ```bash
-git clone https://github.com/Shahfarzane/raindrop-io-mcp.git
-cd raindrop-io-mcp
+git clone https://github.com/Shahfarzane/raindrop-mcp.git
+cd raindrop-mcp
 npm install
 cp .env.example .env
 ```
