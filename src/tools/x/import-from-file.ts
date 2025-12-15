@@ -2,14 +2,10 @@ import { z } from "zod";
 import { type ToolMetadata, type InferSchema } from "xmcp";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import {
-	getCollections,
-	createCollection,
-	createRaindrops,
-	getRaindrops,
-} from "../../lib/raindrop-client";
-import type { XLocalTweet, XLocalImportResult } from "../../lib/x-local-types";
+import { getOrCreateCollection } from "../../lib/collection-utils";
+import { createRaindrops, getRaindrops } from "../../lib/raindrop-client";
 import type { CreateRaindropRequest, RaindropType } from "../../lib/types";
+import type { XLocalTweet, XLocalImportResult } from "../../lib/x-local-types";
 
 export const schema = {
 	directory: z
@@ -35,29 +31,6 @@ export const metadata: ToolMetadata = {
 };
 
 const BATCH_SIZE = 100;
-
-/**
- * Find or create the target collection
- */
-async function getOrCreateCollection(
-	name: string
-): Promise<{ id: number; name: string; created: boolean }> {
-	const collectionsResponse = await getCollections();
-	const existing = collectionsResponse.items.find(
-		(c) => c.title.toLowerCase() === name.toLowerCase()
-	);
-
-	if (existing) {
-		return { id: existing._id, name: existing.title, created: false };
-	}
-
-	const newCollection = await createCollection({ title: name });
-	return {
-		id: newCollection.item._id,
-		name: newCollection.item.title,
-		created: true,
-	};
-}
 
 /**
  * Get existing X.com URLs in a collection to avoid duplicates

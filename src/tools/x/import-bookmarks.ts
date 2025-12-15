@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { type ToolMetadata, type InferSchema } from "xmcp";
+import { getOrCreateCollection } from "../../lib/collection-utils";
+import { createRaindrop } from "../../lib/raindrop-client";
+import type { CreateRaindropRequest, RaindropType } from "../../lib/types";
 import { isXAuthenticated } from "../../lib/x-auth";
 import { fetchBookmarks, getCurrentXUser } from "../../lib/x-client";
 import {
@@ -13,18 +16,12 @@ import {
 	addImportError,
 	getImportSummary,
 } from "../../lib/x-import-state";
-import {
-	getCollections,
-	createCollection,
-	createRaindrop,
-} from "../../lib/raindrop-client";
 import type {
 	XTweet,
 	XUser,
 	XMedia,
 	XImportState,
 } from "../../lib/x-types";
-import type { CreateRaindropRequest, RaindropType } from "../../lib/types";
 
 export const schema = {
 	collectionName: z
@@ -54,34 +51,6 @@ export const metadata: ToolMetadata = {
 };
 
 // ============ Helper Functions ============
-
-/**
- * Find or create the target collection
- */
-async function getOrCreateCollection(
-	name: string
-): Promise<{ id: number; name: string; created: boolean }> {
-	// Get all collections
-	const collectionsResponse = await getCollections();
-
-	// Look for existing collection with this name
-	const existing = collectionsResponse.items.find(
-		(c) => c.title.toLowerCase() === name.toLowerCase()
-	);
-
-	if (existing) {
-		return { id: existing._id, name: existing.title, created: false };
-	}
-
-	// Create new collection
-	const newCollection = await createCollection({ title: name });
-
-	return {
-		id: newCollection.item._id,
-		name: newCollection.item.title,
-		created: true,
-	};
-}
 
 /**
  * Convert a tweet to a Raindrop bookmark
