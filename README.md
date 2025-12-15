@@ -17,7 +17,6 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for ma
 
 - Node.js 20+
 - [Raindrop.io](https://raindrop.io) account
-- API credentials from [Raindrop.io Integrations](https://app.raindrop.io/settings/integrations)
 
 ### Installation
 
@@ -26,12 +25,22 @@ git clone https://github.com/Shahfarzane/raindrop-io-mcp.git
 cd raindrop-io-mcp
 npm install
 cp .env.example .env
-# Edit .env with your credentials
 ```
 
-### Configuration
+## Setup
 
-Create a `.env` file with your Raindrop.io OAuth credentials:
+### Step 1: Create Raindrop.io App
+
+1. Go to [Raindrop.io Integrations](https://app.raindrop.io/settings/integrations)
+2. Click **"Create new app"**
+3. Fill in app details:
+   - **Name:** Your app name (e.g., "My MCP Server")
+   - **Redirect URI:** `http://localhost:3000/callback`
+4. After creating, copy the **Client ID** and **Client Secret**
+
+### Step 2: Configure Environment
+
+Edit `.env` with your credentials:
 
 ```env
 RAINDROP_CLIENT_ID=your_client_id
@@ -39,30 +48,53 @@ RAINDROP_CLIENT_SECRET=your_client_secret
 RAINDROP_REDIRECT_URI=http://localhost:3000/callback
 ```
 
-### Running the Server
+> **Important:** The redirect URI must match exactly what you entered in Raindrop.io settings.
+
+### Step 3: Start the Server
 
 ```bash
-# Development (with hot reload)
-npm run dev
-
-# Production
+# Build and start
 npm run build
 npm start
 ```
 
-### MCP Client Setup
+The server runs on **two ports**:
 
-Add to your MCP client configuration (e.g., Claude Desktop):
+| Port | Purpose |
+|------|---------|
+| `3001` | MCP server endpoint (`/mcp`) - for AI assistants |
+| `3000` | OAuth callback (temporary) - only active during authentication |
+
+### Step 4: Authenticate
+
+On first use, you need to authenticate with Raindrop.io:
+
+1. Call the `authenticate` tool via your MCP client
+2. Open the provided URL in your browser
+3. Authorize the application on Raindrop.io
+4. The callback is captured automatically
+
+Tokens are stored in `~/.raindrop-mcp/tokens.json` and auto-refresh when expired.
+
+## MCP Client Configuration
+
+### Claude Desktop
+
+Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 ```json
 {
   "mcpServers": {
     "raindrop": {
-      "url": "http://localhost:4857/mcp"
+      "url": "http://localhost:3001/mcp"
     }
   }
 }
 ```
+
+### Other MCP Clients
+
+Point your MCP client to: `http://localhost:3001/mcp`
 
 ## Tools
 
@@ -94,18 +126,59 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 
 ## X.com Import (Experimental)
 
-Import your Twitter/X bookmarks into Raindrop.io. Requires separate X.com API credentials.
+Import your Twitter/X bookmarks into Raindrop.io.
+
+### Setup
+
+1. Create an app at [X Developer Portal](https://developer.twitter.com/en/portal/dashboard)
+2. Enable **OAuth 2.0** with these settings:
+   - **Type:** Confidential client (or Public with PKCE)
+   - **Redirect URI:** `http://localhost:3001/callback`
+   - **Scopes:** `tweet.read`, `users.read`, `bookmark.read`, `offline.access`
+
+3. Add to `.env`:
 
 ```env
-# Add to .env for X.com import
 X_CLIENT_ID=your_x_client_id
 X_CLIENT_SECRET=your_x_client_secret
 X_REDIRECT_URI=http://localhost:3001/callback
 ```
 
-Supports:
-- API import with rate limiting and resume capability
-- Local JSON file import from browser extensions
+### Usage
+
+1. Call `x_authenticate` to connect your X.com account
+2. Call `import_x_bookmarks` to import (supports resume on interruption)
+3. Or use `import_x_from_file` with a JSON export from browser extensions
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    MCP Server                            │
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│   Port 3001: MCP Protocol (always running)               │
+│   └── POST /mcp - JSON-RPC endpoint for AI assistants    │
+│                                                          │
+│   Port 3000: Raindrop OAuth Callback (on-demand)         │
+│   └── GET /callback - temporary, during authentication   │
+│                                                          │
+│   Port 3001: X.com OAuth Callback (on-demand)            │
+│   └── GET /callback - temporary, during X authentication │
+│                                                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Token Storage
+
+Tokens are stored in `~/.raindrop-mcp/`:
+
+| File | Purpose |
+|------|---------|
+| `tokens.json` | Raindrop.io OAuth tokens |
+| `x-tokens.json` | X.com OAuth tokens |
+| `x-pkce.json` | X.com PKCE state (temporary) |
+| `import-state/` | X.com import progress (for resume) |
 
 ## Development
 
@@ -116,6 +189,17 @@ npm start        # Run production server
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+
+## Troubleshooting
+
+### "Not authenticated" error
+Run the `authenticate` tool first to connect your Raindrop.io account.
+
+### OAuth callback fails
+Ensure the redirect URI in your `.env` matches exactly what's configured in Raindrop.io settings (including trailing slashes).
+
+### Port already in use
+The OAuth callback uses port 3000 temporarily. Close any other servers on that port before authenticating.
 
 ## License
 
