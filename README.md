@@ -9,7 +9,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for ma
 - **Library Analysis** - Overview stats, untagged items, organization suggestions
 - **X.com Import** *(Experimental)* - Import Twitter/X bookmarks via API or JSON export
 - **Token Efficient** - Configurable response detail levels (minimal/summary/standard/full)
-- **Secure OAuth** - Auto-refreshing tokens with PKCE support for X.com
+- **Secure OAuth** - Auto-refreshing tokens, auto-opens browser for authorization
 
 ## Quick Start
 
@@ -70,9 +70,9 @@ The server runs on **two ports**:
 On first use, you need to authenticate with Raindrop.io:
 
 1. Call the `authenticate` tool via your MCP client
-2. Open the provided URL in your browser
-3. Authorize the application on Raindrop.io
-4. The callback is captured automatically
+2. **Your browser opens automatically** to the Raindrop.io authorization page
+3. Authorize the application
+4. The callback is captured automatically and you're ready to go!
 
 Tokens are stored in `~/.raindrop-mcp/tokens.json` and auto-refresh when expired.
 
@@ -146,7 +146,7 @@ X_REDIRECT_URI=http://localhost:3001/callback
 
 ### Usage
 
-1. Call `x_authenticate` to connect your X.com account
+1. Call `x_authenticate` - browser opens automatically for authorization
 2. Call `import_x_bookmarks` to import (supports resume on interruption)
 3. Or use `import_x_from_file` with a JSON export from browser extensions
 
@@ -194,6 +194,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
 
 ### "Not authenticated" error
 Run the `authenticate` tool first to connect your Raindrop.io account.
+
+### Browser doesn't open automatically
+If the browser doesn't open, the authorization URL is printed in the console. Copy and paste it into your browser manually.
 
 ### OAuth callback fails
 Ensure the redirect URI in your `.env` matches exactly what's configured in Raindrop.io settings (including trailing slashes).
