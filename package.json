@@ -1,7 +1,27 @@
 {
-  "name": "raindrop",
-  "version": "0.1.0",
-  "description": "An xmcp application with tool syntax",
+  "name": "raindrop-io-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Raindrop.io bookmark management with AI assistants",
+  "author": "Shahfarzane <hey@nerd.ceo>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shahfarzane/raindrop-io-mcp.git"
+  },
+  "homepage": "https://github.com/Shahfarzane/raindrop-io-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/Shahfarzane/raindrop-io-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "raindrop",
+    "raindrop-io",
+    "bookmarks",
+    "ai",
+    "claude",
+    "xmcp"
+  ],
   "engines": {
     "node": ">=20.0.0"
   },
